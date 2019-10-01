@@ -35,28 +35,61 @@ public class StudentRepoImplements implements StudentRepo {
 	}
 
 	public List<Student> allStudents() {
-		String SQL = "select * from Student";
-		List<Student> students = jdbctemplate.query(SQL, new StudentMapper());
-		return students;
+		
+		try {
+			
+			String SQL = "select * from Student";
+			List<Student> students = jdbctemplate.query(SQL, new StudentMapper());
+			return students;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+		
 	}
 
 	public int insertStudents(Student student) {
 
-		String SQL = "insert into Student(studentId,name) values(?,?)";
-		System.out.println(student);
-		return jdbctemplate.update(SQL, student.getStudentId(), student.getName());
+		try {
+			String SQL = "insert into Student(studentId,name,dept,email) values(?,?,?,?)";
+			System.out.println(student);
+			return jdbctemplate.update(SQL, student.getStudentId(), student.getName(), student.getDept(),
+					student.getEmail());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (Integer) null;
+		
 	}
 
-	public void delete(Integer studentId) {
-		String SQL = "delete  from Student where studentId = ?";
-		jdbctemplate.update(SQL, studentId);
-		System.out.println("Deleted");
+	public void delete(String name) {
+		
+		try {
+			String SQL = "delete  from Student where name = ?";
+			jdbctemplate.update(SQL, name);
+			System.out.println("Deleted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		
 	}
 
-	public Student findStudentById(Integer studentId) {
+	public List<Student> findStudent(String name) {
 
-		String FETCH_SQL_BY_ID = "select * from Student where studentId = ?";
-		return jdbctemplate.queryForObject(FETCH_SQL_BY_ID, new Object[] { studentId }, new StudentMapper());
+		try {
+			String SQL = "select * from Student where  studentId like '"+name+"%'  or name like  '"+name+"%'  or dept like  '"+name+"%'  or email like  '"+name+"%' ";
+//			String n = name + "%";
+			List<Student> students = jdbctemplate.query(SQL, new StudentMapper());
+			return students;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 
 	}
 
